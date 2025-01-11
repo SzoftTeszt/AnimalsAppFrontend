@@ -1,0 +1,28 @@
+{
+  "allatok": [
+    {
+        "id":"1",
+        "nev":"Sziszi",
+        "faj":"Kígyó",
+        "ar":"5000"
+    },
+    {
+      "nev": "Csúszós",
+      "faj": "Kígyó",
+      "ar": "10000999",
+      "id": "2"
+    },
+    {
+      "nev": "Edgar Allen Pok",
+      "faj": "Pók",
+      "ar": "2000",
+      "id": "3"
+    },
+    {
+      "id": "4",
+      "nev": "Höri",
+      "faj": "Hörcsög",
+      "ar": "20000"
+    }
+  ]
+}
