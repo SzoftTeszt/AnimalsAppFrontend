@@ -25,6 +25,16 @@ const animalsString= `[
     }
   ]`
 
+const options={
+    method:"",
+    headers: {
+        "Content-Type":"application/json"
+    },
+    body:{}
+    }
+const apiUrl='http://172.16.16.136:3000/allatok/'
+
+
 function divFactory(tartalom, osztalyok){
     const elem = document.createElement("div")
     elem.innerHTML=tartalom
@@ -36,7 +46,7 @@ console.log("Megvagyok!!!!")
 console.log(JSON.parse(animalsString))
 
 const stage={};
-stage.animals=JSON.parse(animalsString)
+// stage.animals=JSON.parse(animalsString)
 stage.oszlopok=["nev","faj","ar"]
 
 const kontener= divFactory("","container")
@@ -73,7 +83,7 @@ function render(){
         const addBtn = document.createElement("button")
         addBtn.className="btn btn-primary"
         addBtn.innerHTML="Hozzáad"
-        addBtn.addEventListener("click", addAnimal)
+        addBtn.addEventListener("click", addAnimalAPI)
         cella.appendChild(addBtn)
 
         sor.appendChild(cella)
@@ -102,14 +112,14 @@ function render(){
         const editBtn = document.createElement("button")
         editBtn.className="btn btn-primary"
         editBtn.innerHTML="Szerkeszt"
-        editBtn.addEventListener("click", updateAnimal)
+        editBtn.addEventListener("click", updateAnimalAPI)
         editBtn.dataset.id=animal.id
         cella.appendChild(editBtn)
 
         const delBtn = document.createElement("button")
         delBtn.className="btn btn-primary ms-1"
         delBtn.innerHTML="Töröl"
-        delBtn.addEventListener("click", deleteAnimal)
+        delBtn.addEventListener("click", deleteAnimalAPI)
         delBtn.dataset.id=animal.id
         cella.appendChild(delBtn)
 
@@ -133,9 +143,17 @@ function addAnimal(){
     newAnimal.id=max+1
     stage.animals.push(newAnimal)
     render()
-    
+
     console.log("Maximum:",max)
     console.log(stage.animals)
+}
+function addAnimalAPI(){
+    const newAnimal={}
+    for (const oszlop of stage.oszlopok) {
+        const ertek= document.getElementById("new"+oszlop).value
+        newAnimal[oszlop]=ertek
+    }
+    apiRequest("POST",newAnimal)
 }
 
 function updateAnimal(){
@@ -149,6 +167,16 @@ function updateAnimal(){
     console.log(stage.animals)
 }
 
+function updateAnimalAPI(){
+   
+    const updateAnimal={}
+    for (const oszlop of stage.oszlopok) {
+        const ertek= document.getElementById(this.dataset.id+oszlop).value
+        updateAnimal[oszlop]=ertek
+    }
+    apiRequest("PUT",updateAnimal,this.dataset.id)
+}
+
 //CRUD C-Create, R-Read, U-Update, D-Delete
 
 function deleteAnimal(){
@@ -159,8 +187,36 @@ function deleteAnimal(){
     render()
 }
 
-render()
 
+function deleteAnimalAPI(){
+    apiRequest("DELETE",{},this.dataset.id)  
+}
+
+getAnimals()
+
+function getAnimals(){
+    options.method="GET"
+    delete options.body
+    fetch(apiUrl, options)
+      .then(valasz => valasz.json())
+      .then(adat => {
+        stage.animals=adat
+        render()
+      })
+      .catch(error=>console.log("Fetch error", error))
+}
+
+function apiRequest(method, body, id){
+    if (!id) id=""
+    options.method=method
+    options.body= JSON.stringify(body)
+    fetch(apiUrl+id, options).then(
+        (res)=> {
+            if (!res.ok) throw new Error('A hálózaról érkező válasz nem megfelelő!')
+            getAnimals()    
+        }
+    ).catch(err=>console.log(err))
+}
 
 // console.log(stage.animals[0])
 // console.log(stage.animals[0].nev)
