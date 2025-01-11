@@ -43,14 +43,55 @@ const kontener= divFactory("","container")
 document.body.appendChild(kontener)
 
 function render(){
-    // Fejléc elkésíztése
-    const sor= divFactory("","row fw-bold")
+    kontener.innerHTML=""
+    // Fejléc elkészítése
+    const sor= divFactory("","row fw-bold my-2")
     for (const oszlop of stage.oszlopok) {
         sor.appendChild(divFactory(oszlop,"col"))
     }
     sor.appendChild(divFactory("Műveletek","col"))
     kontener.appendChild(sor)
     // Fejléc készítés vége
+
+    // Adatok kiíratása
+    for (const animal of stage.animals) {  
+
+        const sor= divFactory("","row my-2")
+        for (const oszlop of stage.oszlopok) {
+            sor.appendChild(divFactory(animal[oszlop],"col"))
+        }
+        const cella=divFactory("","col")
+
+        const editBtn = document.createElement("button")
+        editBtn.className="btn btn-primary"
+        editBtn.innerHTML="Szerkeszt"
+        editBtn.addEventListener("click", updateAnimal)
+        cella.appendChild(editBtn)
+
+        const delBtn = document.createElement("button")
+        delBtn.className="btn btn-primary ms-1"
+        delBtn.innerHTML="Töröl"
+        delBtn.addEventListener("click", deleteAnimal)
+        delBtn.dataset.id=animal.id
+        cella.appendChild(delBtn)
+
+        sor.appendChild(cella)
+        kontener.appendChild(sor)
+
+    }
+    // Adat kiíratás vége
+}
+
+function updateAnimal(){
+    console.log("update")
+}
+
+function deleteAnimal(){
+    console.log("delete", this.dataset.id)
+    stage.animals=stage.animals.filter(
+        (allat)=>allat.id != this.dataset.id
+    )
+    render()
 }
 
 render()
